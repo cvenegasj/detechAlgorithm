@@ -1,4 +1,9 @@
 def folderDetech2tags(input_path, output_path):
+    from os import listdir
+    from os.path import isfile, join
+    from datetime import datetime
+    from shutil import copyfile
+    
     files = [f for f in listdir(input_path) if isfile(join(input_path, f))]
     files = [f for f in files if 'detech' in f]
 
