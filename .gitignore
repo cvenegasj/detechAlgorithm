@@ -1,0 +1,15 @@
+# Created by .ignore support plugin (hsz.mobi)
+.DS_Store
+.gitignore
+.idea/inspectionProfiles/
+.idea/workspace.xml
+core/.DS_Store
+core/images_operations.pyc
+core/registro1.pyc
+uploads/.DS_Store
+
+uploads
+workspace
+registered
+.idea
+core/.idea

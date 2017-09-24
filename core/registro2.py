@@ -5,6 +5,7 @@ from __future__ import print_function
 
 import SimpleITK as sitk
 import os
+import matplotlib.pyplot as plt
 
 
 def command_iteration(method) :
@@ -32,7 +33,7 @@ def BSplineRegistration(imagen1, imagen2):
     print(tx.GetParameters())
 
     R = sitk.ImageRegistrationMethod()
-    R.SetMetricAsMattesMutualInformation(50)
+    R.SetMetricAsMattesMutualInformation(150)#50
     R.SetOptimizerAsGradientDescentLineSearch(5.0, 100,
                                           convergenceMinimumValue=1e-4,
                                           convergenceWindowSize=5)
@@ -54,6 +55,7 @@ def BSplineRegistration(imagen1, imagen2):
     print(" Iteration: {0}".format(R.GetOptimizerIteration()))
     print(" Metric value: {0}".format(R.GetMetricValue()))
 
+    #sitk.WriteTransform(outTx,  outfile)
 
     if ( not "SITK_NOSHOW" in os.environ ):
 
@@ -66,4 +68,6 @@ def BSplineRegistration(imagen1, imagen2):
         out = resampler.Execute(moving)
 
     slice = sitk.GetArrayFromImage(out)
+    #plt.imshow(slice,'gray',interpolation=None)
+    #plt.show()
     return slice

@@ -1,9 +1,11 @@
-def folderDetech2tags(input_path, output_path):
-    from os import listdir
-    from os.path import isfile, join
-    from datetime import datetime
-    from shutil import copyfile
-    
+from datetime import datetime
+from os import listdir
+from os.path import isfile, join
+from shutil import copyfile
+import argparse
+
+
+def detech2tags(input_path, output_path):
     files = [f for f in listdir(input_path) if isfile(join(input_path, f))]
     files = [f for f in files if 'detech' in f]
 
@@ -61,3 +63,17 @@ def folderDetech2tags(input_path, output_path):
 
         for i in range(len(files_names)):
             copyfile(input_path + files_names[i], output_path + finalNames[i])
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-i', '--input', help='Input folder', required=True)
+parser.add_argument('-o', '--output', help='output folder', required=True)
+
+args = parser.parse_args()
+
+print args
+
+inputFolder = args.input
+outputFolder = args.output
+
+detech2tags(input_path=inputFolder, output_path=outputFolder)

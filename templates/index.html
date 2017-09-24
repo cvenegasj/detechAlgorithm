@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+    <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <title> Detech UI</title>
+</head>
+<body>
+
+<div id="app">
+    <v-progress-linear v-bind:indeterminate="true" v-bind:active="show" class="ma-0 pa-0"></v-progress-linear>
+    <iframe width="0" height="0" border="0" name="dummyframe" id="dummyframe" style="display: none"></iframe>
+    <v-app>
+        <v-toolbar dark class="primary">
+            <v-toolbar-title class="white--text">DETECH ALGORITHM</v-toolbar-title>
+        </v-toolbar>
+        <main>
+            <v-container>
+                <v-layout row wrap>
+                    <v-flex xs5 text-xs-center>
+                        <h4> Unregistered Images</h4>
+
+                        <div id="img-container"></div>
+                    </v-flex>
+
+                    <v-flex xs2 text-xs-center>
+                        <v-btn fab dark class="red darken-1" id="regBtn" @click="registerImages()">
+                            <v-icon>keyboard_arrow_right</v-icon>
+                        </v-btn>
+
+                        <v-form method=post enctype=multipart/form-data action="/upload-folder" target="dummyframe">
+                            <v-btn dark class="btn--dark-flat-focused jbtn-file">
+                                Select files
+                                <input type="file" name="file" size="40" webkitdirectory mozdirectory msdirectory odirectory directory multiple>
+                            </v-btn>
+                            <v-btn type=submit>Upload</v-btn>
+                        </v-form>
+                        <v-btn id="showBtn" @click="getUploadedImages()"> Show images</v-btn>
+                    </v-flex>
+
+                    <v-flex xs5 text-xs-center>
+                        <h4> Registered Images</h4>
+                        <div id="img-reg-container"></div>
+                    </v-flex>
+                </v-layout>
+
+
+            </v-container>
+        </main>
+    </v-app>
+</div>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            show: false,
+            images_paths: []
+        },
+        methods: {
+            getUploadedImages: function () {
+                vm = this;
+                $.ajax('api/i/names').done(function (data) {
+                    vm.images_paths = data;
+                    $("#img-container").empty();
+                    for (var i=0;i<vm.images_paths.length;i++) {
+                        var image = new Image();
+                        image.src = 'api/i/'+vm.images_paths[i];
+                        $("#img-container").append(image);
+
+                    }
+                });
+                this.showRegisteredImages()
+            },
+
+            registerImages: function () {
+                var vm = this;
+                vm.show = true;
+                $.ajax('api/i/registration').done(function (data) {
+                    vm.show = false;
+                })
+            },
+
+            showRegisteredImages: function () {
+                $("#img-reg-container").empty();
+                for (var i=0;i<vm.images_paths.length;i++) {
+                    var image = new Image();
+                    image.src = 'api/i/reg/'+vm.images_paths[i];
+                    $("#img-reg-container").append(image);
+
+                }
+            }
+
+
+        }
+    })
+</script>
+<style>
+    .jbtn-file {
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    .jbtn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        outline: none;
+        cursor: inherit;
+        display: block;
+    }
+</style>
+</body>
+</html>
