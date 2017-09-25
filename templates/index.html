@@ -10,12 +10,13 @@
 <body>
 
 <div id="app">
-    <v-progress-linear v-bind:indeterminate="true" v-bind:active="show" class="ma-0 pa-0"></v-progress-linear>
     <iframe width="0" height="0" border="0" name="dummyframe" id="dummyframe" style="display: none"></iframe>
     <v-app>
         <v-toolbar dark class="primary">
             <v-toolbar-title class="white--text">DETECH ALGORITHM</v-toolbar-title>
         </v-toolbar>
+        <v-progress-linear v-bind:indeterminate="true" v-bind:active="show" class="ma-0 pa-0"></v-progress-linear>
+
         <main>
             <v-container>
                 <v-layout row wrap>
@@ -38,12 +39,31 @@
                             <v-btn type=submit>Upload</v-btn>
                         </v-form>
                         <v-btn id="showBtn" @click="getUploadedImages()"> Show images</v-btn>
+                        <v-btn @click="deleteImages()">Delete images</v-btn>
+                        <v-dialog v-model="dialog" persistent>
+                            <v-btn primary dark slot="activator">CROP REGISTERED IMAGE</v-btn>
+                            <v-card>
+                                <v-card-title class="headline">Select the crop rectangle</v-card-title>
+                                <v-card-text>
+                                    <v-btn @click="generateMeanImage()">Get mean registered image</v-btn>
+                                    <img id="meanImg">
+                                </v-card-text>
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn class="green--text darken-1" flat="flat" @click.native="dialog = false">Disagree</v-btn>
+                                    <v-btn class="green--text darken-1" flat="flat" @click.native="dialog = false">Agree</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
                     </v-flex>
 
                     <v-flex xs5 text-xs-center>
                         <h4> Registered Images</h4>
                         <div id="img-reg-container"></div>
                     </v-flex>
+                </v-layout>
+                <v-layout>
+
                 </v-layout>
 
 
@@ -58,7 +78,8 @@
         el: '#app',
         data: {
             show: false,
-            images_paths: []
+            images_paths: [],
+            dialog: false
         },
         methods: {
             getUploadedImages: function () {
@@ -92,6 +113,20 @@
                     $("#img-reg-container").append(image);
 
                 }
+            },
+
+            deleteImages : function () {
+
+            },
+
+            generateMeanImage : function () {
+                var vm = this;
+                vm.show = true;
+                $.ajax('api/i/mean').done(function (data) {
+                    vm.show = false;
+                    var nameOfImage = data["image"];
+                    $("#meanImg").src = "api/i/reg/" + nameOfImage;
+                })
             }
 
 

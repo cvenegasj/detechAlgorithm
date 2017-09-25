@@ -147,7 +147,8 @@ func SetAPI(app iris.Party) {
 			return
 		}
 
-		name := fmt.Sprintf("%s", out)
+		name := fmt.Sprintf("%s", out[:len(out)-1])
+
 		c.StatusCode(iris.StatusOK)
 		c.JSON(iris.Map{"image": name})
 
