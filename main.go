@@ -15,7 +15,7 @@ import (
 const UPLOAD_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/uploads/"
 const WORKSPACE_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/workspace/"
 const REGISTRATION_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/registered/"
-const CROPPED_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/cropped"
+const CROPPED_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/cropped/"
 
 func main() {
 	app := iris.New()

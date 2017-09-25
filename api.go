@@ -157,9 +157,10 @@ func SetAPI(app iris.Party) {
 	app.Get("/i/crop", func(c context.Context) {
 		//sh ./core/cropping_workspace.sh ./registered/ ./cropped/ "10,10,30,50"
 		pads := c.URLParamTrim("pads")
-		cmd := exec.Command("sh", "core/cropping_workspace.sh", REGISTRATION_FOLDER, CROPPED_FOLDER, `"`+pads+`"`)
-		out, err := cmd.Output()
+		cmd := exec.Command("sh", "core/cropping_workspace.sh", REGISTRATION_FOLDER, CROPPED_FOLDER, pads)
 
+		out, err := cmd.Output()
+		log.Println(cmd.Args)
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.JSON(iris.Map{"error": err.Error()})
