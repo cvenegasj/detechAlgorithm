@@ -1,2 +1,8 @@
-# detechAlgorithm
-The algorithm for detect UPP
+# Detech Algorithm
+
+## Install
+
+```console
+$ go get github.com/bregydoc/detech/detechAlgorithm
+```
+

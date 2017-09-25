@@ -8,11 +8,78 @@ import (
 	"log"
 	"os/exec"
 	"net/http"
+	"fmt"
+	"os"
 )
 
 func SetAPI(app iris.Party) {
+	app.Get("/i/delete_all", func(c context.Context) {
+		err := os.RemoveAll(UPLOAD_FOLDER)
+		if err!=nil {
+			log.Println(err)
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+
+				"error": err.Error(),
+			})
+		}
+
+		err = os.RemoveAll(WORKSPACE_FOLDER)
+		if err!=nil {
+			log.Println(err)
+
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error": err.Error(),
+			})
+		}
+
+		err = os.RemoveAll(REGISTRATION_FOLDER)
+		if err!=nil {
+			log.Println(err)
+
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error": err.Error(),
+			})
+		}
+
+
+
+		err = os.MkdirAll(UPLOAD_FOLDER,os.ModePerm)
+		if err!=nil {
+			log.Println(err)
+
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error": err.Error(),
+			})
+		}
+
+		err = os.MkdirAll(WORKSPACE_FOLDER,os.ModePerm)
+		if err!=nil {
+			log.Println(err)
+
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error": err.Error(),
+			})
+		}
+
+		err = os.MkdirAll(REGISTRATION_FOLDER,os.ModePerm)
+		if err!=nil {
+			log.Println(err)
+
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error": err.Error(),
+			})
+		}
+
+	})
+
 	app.Get("/i/names", func(c context.Context) {
-		files, err := ioutil.ReadDir(WORKSPACE)
+		files, err := ioutil.ReadDir(WORKSPACE_FOLDER)
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.Err()
@@ -33,7 +100,7 @@ func SetAPI(app iris.Party) {
 
 	app.Get("/i/{name}", func(c context.Context) {
 		name := c.Params().Get("name")
-		err := c.SendFile(WORKSPACE+name, "img.jpg")
+		err := c.SendFile(WORKSPACE_FOLDER+name, "img.jpg")
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.JSON(iris.Map{"error": err.Error()})
@@ -42,7 +109,7 @@ func SetAPI(app iris.Party) {
 
 
 	app.Get("/i/registration", func(c context.Context) {
-		cmd := exec.Command("sh", "core/register_workspace.sh", WORKSPACE, REGISTRATION_FOLDER)
+		cmd := exec.Command("sh", "core/register_workspace.sh", WORKSPACE_FOLDER, REGISTRATION_FOLDER)
 		log.Println(cmd.Args)
 		out, err := cmd.Output()
 
@@ -69,18 +136,17 @@ func SetAPI(app iris.Party) {
 		cmd := exec.Command("sh", "core/get_mean_image.sh", REGISTRATION_FOLDER)
 		log.Println(cmd.Args)
 		out, err := cmd.Output()
-		log.Println("err:", err)
 
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.JSON(iris.Map{"error": err.Error()})
 		}
 
-		name := string(out)
+		name := fmt.Sprintf("%s", out)
+		log.Println("(Downloading...)",REGISTRATION_FOLDER+name)
 
 		err = c.SendFile(REGISTRATION_FOLDER+name, "img.jpg")
 
-		log.Println(REGISTRATION_FOLDER+name)
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.JSON(iris.Map{"error": err.Error()})

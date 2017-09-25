@@ -12,11 +12,10 @@ import (
 	"time"
 )
 
-const UPLOAD_FOLDER = "./uploads/"
-const WORKSPACE = "./workspace/"
-const REGISTRATION_FOLDER = "./registered/"
+const UPLOAD_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/uploads/"
+const WORKSPACE_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/workspace/"
+const REGISTRATION_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/registered/"
 
-var LastFolderUsed string = ""
 
 func main() {
 	app := iris.New()
@@ -90,7 +89,7 @@ func main() {
 		c.Writef("Upload of %d files completed in %s\n", numOfFiles, t2.Sub(t1).String())
 		log.Printf("Upload of %d files completed in %s", numOfFiles, t2.Sub(t1).String())
 
-		cmd := exec.Command("sh", "core/create_workspace.sh", UPLOAD_FOLDER, WORKSPACE)
+		cmd := exec.Command("sh", "core/create_workspace.sh", UPLOAD_FOLDER, WORKSPACE_FOLDER)
 		log.Println(cmd.Args)
 		out, err := cmd.Output()
 		if err != nil {
