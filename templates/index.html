@@ -40,14 +40,14 @@
                         </v-form>
                         <v-btn id="showBtn" @click="getUploadedImages()"> Show images</v-btn>
                         <v-btn @click="deleteImages()">Delete images</v-btn>
-                        <v-dialog v-model="dialog" persistent width="600px">
+                        <v-dialog v-model="dialog" persistent width="400px">
                             <v-btn primary dark slot="activator">CROPPING</v-btn>
                             <v-card>
                                 <v-card-title class="headline">Select the crop rectangle</v-card-title>
                                 <v-card-text>
                                     <v-btn @click="initCanvas()">Get mean registered image</v-btn>
                                     <!--<img id="meanImg">-->
-                                    <canvas id="canvas" width="400" height="300"></canvas>
+                                    <canvas id="canvas" width="300" height="300"></canvas>
                                 </v-card-text>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
@@ -80,7 +80,9 @@
         data: {
             show: false,
             images_paths: [],
-            dialog: false
+            dialog: false,
+            crop_data: []
+
         },
         methods: {
             getUploadedImages: function () {
@@ -208,7 +210,7 @@
                     // clear the canvas
                     ctx.clearRect(0,0,canvas.width,canvas.height);
                     var K = 4;
-                    ctx.drawImage(base_image, 50, 30, 80*K, 60*K);
+                    ctx.drawImage(base_image, 10, 10, 80*K, 60*K);
                     // calculate the rectangle width/height based
                     // on starting vs current mouse position
                     var width=mouseX-startX;
@@ -219,6 +221,7 @@
                     ctx.strokeRect(startX,startY,width,height);
 
                     console.log(startX,startY,width,height);
+                    vm.crop_data = [startX, startY, startX + width, startY+height]
                 }
 
                 // listen for mouse events
@@ -238,7 +241,7 @@
                         base_image.style = "width:100%; height: auto;";
                         base_image.onload = function(){
                             var K = 4;
-                            ctx.drawImage(base_image, 50, 30, 80*K, 60*K);
+                            ctx.drawImage(base_image, 10, 10, 80*K, 60*K);
                         }
                     })
                 }
