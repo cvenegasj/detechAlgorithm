@@ -103,5 +103,7 @@ func main() {
 	api := app.Party("/api")
 	SetAPI(api)
 
+	log.Println(app.GetRoutes())
+
 	app.Run(iris.Addr(":8080"), iris.WithoutServerError(iris.ErrServerClosed))
 }

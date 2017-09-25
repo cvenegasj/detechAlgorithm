@@ -7,7 +7,6 @@ import (
 	"github.com/kataras/iris/context"
 	"log"
 	"os/exec"
-	"net/http"
 	"fmt"
 	"os"
 )
@@ -114,7 +113,12 @@ func SetAPI(app iris.Party) {
 		out, err := cmd.Output()
 
 		if err != nil {
-			http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
+			log.Println(err)
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error": err.Error(),
+				"output": string(out),
+			})
 			return
 		}
 		c.StatusCode(iris.StatusOK)
@@ -140,17 +144,13 @@ func SetAPI(app iris.Party) {
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.JSON(iris.Map{"error": err.Error()})
+			return
 		}
 
 		name := fmt.Sprintf("%s", out)
-		log.Println("(Downloading...)",REGISTRATION_FOLDER+name)
+		c.StatusCode(iris.StatusOK)
+		c.JSON(iris.Map{"image": name})
 
-		err = c.SendFile(REGISTRATION_FOLDER+name, "img.jpg")
-
-		if err != nil {
-			c.StatusCode(iris.StatusInternalServerError)
-			c.JSON(iris.Map{"error": err.Error()})
-		}
 	})
 
 }
