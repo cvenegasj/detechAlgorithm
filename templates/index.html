@@ -51,11 +51,11 @@
                                 </v-card-text>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
-                                    <v-btn class="green--text darken-1" flat="flat" @click.native="dialog = false">Disagree</v-btn>
-                                    <v-btn class="green--text darken-1" flat="flat" @click.native="dialog = false">Agree</v-btn>
+                                    <v-btn class="red--text darken-1" flat="flat" @click.native="cropImages()">CUT</v-btn>
                                 </v-card-actions>
                             </v-card>
                         </v-dialog>
+                        <v-btn dark class="cyan" @click="showCropImages()">View crop images</v-btn>
                     </v-flex>
 
                     <v-flex xs5 text-xs-center>
@@ -63,8 +63,19 @@
                         <div id="img-reg-container"></div>
                     </v-flex>
                 </v-layout>
-                <v-layout>
 
+
+                <v-layout>
+                    <v-flex xs5 text-xs-center>
+                        <h4> Cropped Images</h4>
+                        <div id="cropped-images"></div>
+                    </v-flex>
+                    <v-flex xs2 text-xs-center>
+
+                    </v-flex>
+                    <v-flex xs5 text-xs-center>
+
+                    </v-flex>
                 </v-layout>
 
 
@@ -143,6 +154,9 @@
                 var canvas = document.getElementById('canvas'),
                     ctx = canvas.getContext('2d');
                 var base_image = null;
+
+                var K = 4;
+
                 make_base();
 
                 // style the context
@@ -210,7 +224,7 @@
                     // clear the canvas
                     ctx.clearRect(0,0,canvas.width,canvas.height);
                     var K = 4;
-                    ctx.drawImage(base_image, 10, 10, 80*K, 60*K);
+                    ctx.drawImage(base_image, 0, 0, 80*K, 60*K);
                     // calculate the rectangle width/height based
                     // on starting vs current mouse position
                     var width=mouseX-startX;
@@ -221,7 +235,7 @@
                     ctx.strokeRect(startX,startY,width,height);
 
                     console.log(startX,startY,width,height);
-                    vm.crop_data = [startX, startY, startX + width, startY+height]
+                    vm.crop_data = [Math.round(startX/K), Math.round(startY/K),  Math.round((startX + width)/K),  Math.round((startY+height)/K)]
                 }
 
                 // listen for mouse events
@@ -240,10 +254,35 @@
                         base_image.src = "api/i/reg/" + nameOfImage;
                         base_image.style = "width:100%; height: auto;";
                         base_image.onload = function(){
-                            var K = 4;
-                            ctx.drawImage(base_image, 10, 10, 80*K, 60*K);
+
+                            ctx.drawImage(base_image, 0, 0, 80*K, 60*K);
                         }
                     })
+                }
+            },
+
+            cropImages : function () {
+                var vm = this;
+                vm.show=true;
+                var uri = "api/i/crop?pads=" + vm.crop_data[0] + "," + vm.crop_data[1] + "," + vm.crop_data[2] + "," + vm.crop_data[3]
+                console.log(vm.crop_data, uri);
+
+                $.ajax(uri).done(function (data) {
+                    vm.show = false;
+                    vm.dialog = false;
+                    console.log(data);
+                })
+            },
+
+            showCropImages : function () {
+                var vm = this;
+                vm.dialog = false;
+                $("#cropped-images").empty();
+                for (var i=0;i<vm.images_paths.length;i++) {
+                    var image = new Image();
+                    image.src = 'api/i/crop/'+vm.images_paths[i];
+                    $("#cropped-images").append(image);
+
                 }
             }
 

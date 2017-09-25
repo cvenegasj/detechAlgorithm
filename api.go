@@ -43,6 +43,17 @@ func SetAPI(app iris.Party) {
 			})
 		}
 
+		err = os.RemoveAll(CROPPED_FOLDER)
+		if err!=nil {
+			log.Println(err)
+
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error": err.Error(),
+			})
+		}
+
+
 
 
 		err = os.MkdirAll(UPLOAD_FOLDER,os.ModePerm)
@@ -73,8 +84,18 @@ func SetAPI(app iris.Party) {
 			c.JSON(iris.Map{
 				"error": err.Error(),
 			})
+
 		}
 
+		err = os.MkdirAll(CROPPED_FOLDER,os.ModePerm)
+		if err!=nil {
+			log.Println(err)
+
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error": err.Error(),
+			})
+		}
 	})
 
 	app.Get("/i/names", func(c context.Context) {
@@ -96,7 +117,6 @@ func SetAPI(app iris.Party) {
 
 	})
 
-
 	app.Get("/i/{name}", func(c context.Context) {
 		name := c.Params().Get("name")
 		err := c.SendFile(WORKSPACE_FOLDER+name, "img.jpg")
@@ -105,7 +125,6 @@ func SetAPI(app iris.Party) {
 			c.JSON(iris.Map{"error": err.Error()})
 		}
 	})
-
 
 	app.Get("/i/registration", func(c context.Context) {
 		cmd := exec.Command("sh", "core/register_workspace.sh", WORKSPACE_FOLDER, REGISTRATION_FOLDER)
@@ -129,7 +148,7 @@ func SetAPI(app iris.Party) {
 	app.Get("/i/reg/{name}", func(c context.Context) {
 		name := c.Params().Get("name")
 		err := c.SendFile(REGISTRATION_FOLDER+name, "img.jpg")
-		log.Println(REGISTRATION_FOLDER+name)
+		log.Println("(Sending...)", REGISTRATION_FOLDER+name)
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.JSON(iris.Map{"error": err.Error()})
@@ -170,4 +189,15 @@ func SetAPI(app iris.Party) {
 		c.StatusCode(iris.StatusOK)
 		c.JSON(iris.Map{"output": out})
 	})
+
+	app.Get("/i/crop/{name}", func(c context.Context) {
+		name := c.Params().Get("name")
+		err := c.SendFile(CROPPED_FOLDER+name, "img.jpg")
+		log.Println("(Sending...)", CROPPED_FOLDER+name)
+		if err != nil {
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{"error": err.Error()})
+		}
+	})
+
 }
