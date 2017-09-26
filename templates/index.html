@@ -5,6 +5,7 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
     <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.19/fabric.min.js"></script>
     <title> Detech UI</title>
 </head>
 <body>
@@ -15,7 +16,7 @@
         <v-toolbar dark class="primary">
             <v-toolbar-title class="white--text">DETECH ALGORITHM</v-toolbar-title>
         </v-toolbar>
-        <v-progress-linear v-bind:indeterminate="true" v-bind:active="show" class="ma-0 pa-0"></v-progress-linear>
+        <v-progress-linear fixed v-bind:indeterminate="true" v-bind:active="show" class="ma-0 pa-0"></v-progress-linear>
 
         <main>
             <v-container>
@@ -40,6 +41,9 @@
                         </v-form>
                         <v-btn id="showBtn" @click="getUploadedImages()"> Show images</v-btn>
                         <v-btn @click="deleteImages()">Delete images</v-btn>
+
+                        <v-divider></v-divider>
+
                         <v-dialog v-model="dialog" persistent width="400px">
                             <v-btn primary dark slot="activator">CROPPING</v-btn>
                             <v-card>
@@ -56,6 +60,8 @@
                             </v-card>
                         </v-dialog>
                         <v-btn dark class="cyan" @click="showCropImages()">View crop images</v-btn>
+
+                        <v-divider></v-divider>
                     </v-flex>
 
                     <v-flex xs5 text-xs-center>
@@ -73,11 +79,58 @@
                     <v-flex xs2 text-xs-center>
 
                     </v-flex>
-                    <v-flex xs5 text-xs-center>
+                    <v-flex xs5 text-xs-center style="margin-bottom: 30px;">
+                        <h5> Playground difference & threshold images</h5>
+                        <v-layout row wrap >
+                            <v-flex xs12 md6>
+                                <v-subheader>Type of diff</v-subheader>
+                                <v-card class="elevation-0">
+                                    <v-card-text>
+                                        <v-radio-group v-model="type" :mandatory="false">
+                                            <v-radio label="Active-Basal" value="ab"></v-radio>
+                                            <v-radio label="Temporal" value="t"></v-radio>
+                                        </v-radio-group>
+                                    </v-card-text>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs12 md6>
+                                <v-subheader>Side of diff</v-subheader>
+                                <v-card class="elevation-0">
+                                    <v-card-text>
+                                        <v-radio-group v-model="side" :mandatory="false">
+                                            <v-radio label="8" value="8"></v-radio>
+                                            <v-radio label="10" value="10"></v-radio>
+                                            <v-radio label="12" value="12"></v-radio>
+                                            <v-radio label="All" value="all"></v-radio>
+
+
+                                        </v-radio-group>
+                                    </v-card-text>
+                                </v-card>
+                            </v-flex>
+                            <v-btn @click="applyDiffAlgorithm()"> Apply difference between images</v-btn>
+                        </v-layout>
+
+                        <v-layout style="margin-top: 20px;">
+
+                            <v-flex md12 xs12 >
+                                <span >Threshold value:</span>
+                                <v-slider v-model="threshold" thumb-label step="10"></v-slider>
+
+                                <v-btn> Apply threshold</v-btn>
+                            </v-flex>
+
+                        </v-layout>
 
                     </v-flex>
                 </v-layout>
 
+
+                <v-layout>
+                    <v-flex xs12 text-xs-center>
+                        <canvas id="c" width="1200" height="500" style="border-color: black; border-width: 3px; border-style: solid;"></canvas>
+                    </v-flex>
+                </v-layout>
 
             </v-container>
         </main>
@@ -92,7 +145,12 @@
             show: false,
             images_paths: [],
             dialog: false,
-            crop_data: []
+            crop_data: [],
+            type: 'ab',
+            side: 'all',
+            threshold: 0,
+            diffs_names: [],
+            canvas: null
 
         },
         methods: {
@@ -283,9 +341,67 @@
                     image.src = 'api/i/crop/'+vm.images_paths[i];
                     $("#cropped-images").append(image);
 
+                    var uri = "api/i/crop?pads=" + vm.crop_data[0] + "," + vm.crop_data[1] + "," + vm.crop_data[2] + "," + vm.crop_data[3]
+                    console.log(vm.crop_data, uri);
+
+                    $.ajax(uri).done(function (data) {
+                        vm.show = false;
+                        vm.dialog = false;
+                        console.log(data);
+
+                    })
                 }
+            },
+
+            applyDiffAlgorithm: function () {
+                var vm = this;
+                var uri = "api/i/diffs?params=" + vm.side + "," + vm.type;
+
+                $.ajax("api/i/diffs/clean").done(function () {
+                    console.log("Cleaned diffs folder");
+                    $.ajax(uri).done(function (data) {
+                        vm.show = false;
+                        console.log(data);
+                        vm.diffs_names = data;
+
+                        var canvas = this.canvas;
+                        for (var i=0;i<data.length;i++) {
+                            var url = 'api/i/diffs/' + data[i];
+                            var index = i;
+                            fabric.Image.fromURL(url, function(oImg) {
+                                oImg.scale(2);
+                                oImg.left = 30 + 10*i;
+                                oImg.top = 30;
+
+
+                                vm.canvas.add(oImg);
+                                console.log(index);
+                            });
+                        }
+
+                    });
+                });
+
             }
 
+        },
+
+        mounted: function () {
+            this.canvas = new fabric.Canvas('c');
+            var canvas = this.canvas;
+
+
+            /*
+            var rect = new fabric.Rect({
+                left: 100,
+                top: 100,
+                fill: 'red',
+                width: 20,
+                height: 20
+            });
+            //canvas.add(rect);
+
+            * */
 
         }
     })
@@ -316,6 +432,10 @@
     .rectangle {
         border: 1px solid #FF0000;
         position: relative;
+    }
+    #c {
+        height: 100%;
+        width: 100%;
     }
 </style>
 </body>

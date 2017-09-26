@@ -16,15 +16,18 @@ const UPLOAD_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/uploads/"
 const WORKSPACE_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/workspace/"
 const REGISTRATION_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/registered/"
 const CROPPED_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/cropped/"
+const DIFFS_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/diff/"
 
 func main() {
 	app := iris.New()
 
 	view := iris.HTML("./templates", ".html")
 	view.Reload(true)
+
 	app.RegisterView(view)
 
 	app.Get("/", func(c context.Context) {
+
 		c.View("index.html")
 	})
 

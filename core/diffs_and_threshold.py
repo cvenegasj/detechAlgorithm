@@ -232,4 +232,4 @@ def folderDiffsExtract(inputFolder, outputFolder, dist='all', tsub='ab'):
                     absoluteCount += 1
                 z = i
 
-folderDiffsExtract('/Users/bregy/WebstormProjects/detechAlgorithm/cropped/','/Users/bregy/WebstormProjects/detechAlgorithm/diff/', tsub='t')
+# folderDiffsExtract('/Users/bregy/WebstormProjects/detechAlgorithm/cropped/','/Users/bregy/WebstormProjects/detechAlgorithm/diff/', tsub='t')

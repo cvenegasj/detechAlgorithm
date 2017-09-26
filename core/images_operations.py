@@ -65,3 +65,4 @@ def flipAllBTypeImagesFromFolder(folder, typeFlip):
             img.save(folder + f)
 
 
+

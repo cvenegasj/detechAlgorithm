@@ -53,6 +53,18 @@ func SetAPI(app iris.Party) {
 			})
 		}
 
+		err = os.RemoveAll(DIFFS_FOLDER)
+		if err!=nil {
+			log.Println(err)
+
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error": err.Error(),
+			})
+		}
+
+
+		//---------------------------------------------------------
 
 
 
@@ -96,6 +108,17 @@ func SetAPI(app iris.Party) {
 				"error": err.Error(),
 			})
 		}
+
+		err = os.MkdirAll(DIFFS_FOLDER,os.ModePerm)
+		if err!=nil {
+			log.Println(err)
+
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error": err.Error(),
+			})
+		}
+
 	})
 
 	app.Get("/i/names", func(c context.Context) {
@@ -197,6 +220,88 @@ func SetAPI(app iris.Party) {
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.JSON(iris.Map{"error": err.Error()})
+		}
+	})
+
+	app.Get("/i/diffs", func(c context.Context) {
+
+		//sh core/apply_diff.sh ./cropped/ ./diff/  "all,ab"
+
+		params := c.URLParamTrim("params")
+		cmd := exec.Command("sh", "core/apply_diff.sh", CROPPED_FOLDER, DIFFS_FOLDER, params)
+
+		out, err := cmd.Output()
+		log.Println(cmd.Args)
+		if err != nil {
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{"error": err.Error(), "out": out})
+			return
+		}
+
+		files, err := ioutil.ReadDir(DIFFS_FOLDER)
+		if err != nil {
+			c.StatusCode(iris.StatusInternalServerError)
+			c.Err()
+		}
+		nameFiles := make([]string, 0)
+		for _, file := range files {
+			nameFiles = append(nameFiles, file.Name())
+		}
+		log.Println(nameFiles)
+		sort.Sort(ByDetechTag(nameFiles))
+		log.Println(nameFiles)
+
+		c.StatusCode(iris.StatusOK)
+		c.JSON(nameFiles)
+	})
+
+	app.Get("/i/diffs/names", func(c context.Context) {
+		files, err := ioutil.ReadDir(DIFFS_FOLDER)
+		if err != nil {
+			c.StatusCode(iris.StatusInternalServerError)
+			c.Err()
+		}
+		nameFiles := make([]string, 0)
+		for _, file := range files {
+			nameFiles = append(nameFiles, file.Name())
+		}
+		log.Println(nameFiles)
+		sort.Sort(ByDetechTag(nameFiles))
+		log.Println(nameFiles)
+
+		c.StatusCode(iris.StatusOK)
+		c.JSON(nameFiles)
+	})
+
+	app.Get("/i/diffs/{name}", func(c context.Context) {
+		name := c.Params().Get("name")
+		err := c.SendFile(DIFFS_FOLDER+name, "img.jpg")
+		log.Println("(Sending...)", DIFFS_FOLDER+name)
+		if err != nil {
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{"error": err.Error()})
+		}
+	})
+
+	app.Get("/i/diffs/clean", func(c context.Context) {
+		err := os.RemoveAll(DIFFS_FOLDER)
+		if err!=nil {
+			log.Println(err)
+
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error": err.Error(),
+			})
+		}
+
+		err = os.MkdirAll(DIFFS_FOLDER,os.ModePerm)
+		if err!=nil {
+			log.Println(err)
+
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error": err.Error(),
+			})
 		}
 	})
 
