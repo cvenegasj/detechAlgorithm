@@ -115,9 +115,9 @@
 
                             <v-flex md12 xs12 >
                                 <span >Threshold value:</span>
-                                <v-slider v-model="threshold" thumb-label step="10"></v-slider>
+                                <v-slider v-bind:max="255" v-model="threshold" thumb-label step="1" @input="thresholdChange()"></v-slider>
 
-                                <v-btn> Apply threshold</v-btn>
+                                <v-btn @click="invertImages()"> Apply threshold</v-btn>
                             </v-flex>
 
                         </v-layout>
@@ -364,23 +364,70 @@
                         console.log(data);
                         vm.diffs_names = data;
 
+                        var putInCanvas = function (oImg, itemsPerRow, index) {
+                            var kT = 0;
+
+                            if (index>itemsPerRow-1){
+                                kT = Math.floor(index/itemsPerRow);
+                                index = index - itemsPerRow*kT;
+                            }
+                            var top = 30 + 120 * kT;
+                            var left = 30 + 210 * index;
+                            oImg.left = left;
+                            oImg.top = top;
+                        };
+
+
                         var canvas = this.canvas;
                         for (var i=0;i<data.length;i++) {
                             var url = 'api/i/diffs/' + data[i];
-                            var index = i;
+                            var index = 0;
                             fabric.Image.fromURL(url, function(oImg) {
-                                oImg.scale(2);
-                                oImg.left = 30 + 10*i;
-                                oImg.top = 30;
+                                oImg.scale(4);
 
+                                putInCanvas(oImg, 5, index);
 
                                 vm.canvas.add(oImg);
                                 console.log(index);
+                                index++;
                             });
                         }
 
                     });
                 });
+
+            },
+
+            invertImages: function() {
+                var vm = this;
+                var invertFilter = new fabric.Image.filters.Invert();
+
+                var objs = vm.canvas.getObjects().map(function(o) {
+                    o.filters.push(invertFilter);
+                    o.applyFilters(vm.canvas.renderAll.bind(vm.canvas));
+                });
+            },
+
+
+            thresholdChange: function () {
+                var thr = this.threshold;
+                var filter = new fabric.Image.filters.RemoveWhite({
+                    threshold: thr,
+                    distance: 1
+                });
+
+                var vm = this;
+                console.log(thr);
+                var objs = vm.canvas.getObjects().map(function(o) {
+
+                    o.filters.push(filter);
+                    o.applyFilters(vm.canvas.renderAll.bind(vm.canvas));
+
+                });
+
+                console.log(objs);
+
+
 
             }
 
@@ -390,18 +437,6 @@
             this.canvas = new fabric.Canvas('c');
             var canvas = this.canvas;
 
-
-            /*
-            var rect = new fabric.Rect({
-                left: 100,
-                top: 100,
-                fill: 'red',
-                width: 20,
-                height: 20
-            });
-            //canvas.add(rect);
-
-            * */
 
         }
     })
@@ -430,7 +465,7 @@
         border: 10px solid transparent;
     }
     .rectangle {
-        border: 1px solid #FF0000;
+        border: 1px solid #ee0919;
         position: relative;
     }
     #c {

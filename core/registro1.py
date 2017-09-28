@@ -57,7 +57,7 @@ def RigidRegistration(img1, img2, type="correlation", optimizer="grad-desc"):
 
     if not "SITK_NOSHOW" in os.environ:
         resampler = sitk.ResampleImageFilter()
-        resampler.SetReferenceImage(fixed);
+        resampler.SetReferenceImage(fixed)
         resampler.SetInterpolator(sitk.sitkLinear)
         resampler.SetDefaultPixelValue(1)
         resampler.SetTransform(outTx)
