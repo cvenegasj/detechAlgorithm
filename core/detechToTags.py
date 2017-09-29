@@ -5,6 +5,7 @@ from shutil import copyfile
 import argparse
 
 
+
 def detech2tags(input_path, output_path):
     files = [f for f in listdir(input_path) if isfile(join(input_path, f))]
     files = [f for f in files if 'detech' in f]

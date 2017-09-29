@@ -15,7 +15,7 @@ def commandIteration(method):
                                                                      method.GetOptimizerPosition()))
 
 
-def RigidRegistration(img1, img2, type="correlation", optimizer="grad-desc"):
+def RigidRegistration(img1, img2, type="correlation", optimizer="grad-desc", iterations=100):
     global out
     pixelType = sitk.sitkFloat32
 
@@ -36,14 +36,14 @@ def RigidRegistration(img1, img2, type="correlation", optimizer="grad-desc"):
     if optimizer == "grad-descent":
         R.SetOptimizerAsRegularStepGradientDescent(learningRate=0.97,
                                                    minStep=1e-4,
-                                                   numberOfIterations=500,
+                                                   numberOfIterations=iterations,
                                                    gradientMagnitudeTolerance=1e-8)
     elif optimizer == "grad-step-descent":
         R.SetOptimizerAsGradientDescent(learningRate=0.9,
-                                        numberOfIterations=500)
+                                        numberOfIterations=iterations)
     else:
         R.SetOptimizerAsGradientDescent(learningRate=0.9,
-                                        numberOfIterations=500)
+                                        numberOfIterations=iterations)
 
     R.SetOptimizerScalesFromIndexShift()
     tx = sitk.CenteredTransformInitializer(fixed, moving, sitk.Similarity2DTransform())

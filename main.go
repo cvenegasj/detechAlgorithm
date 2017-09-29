@@ -12,11 +12,11 @@ import (
 	"time"
 )
 
-const UPLOAD_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/uploads/"
-const WORKSPACE_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/workspace/"
-const REGISTRATION_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/registered/"
-const CROPPED_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/cropped/"
-const DIFFS_FOLDER = "/Users/bregy/WebstormProjects/detechAlgorithm/diff/"
+const UPLOAD_FOLDER = "/home/bregy/Desktop/detechAlgorithm/uploads/"
+const WORKSPACE_FOLDER = "/home/bregy/Desktop/detechAlgorithm/workspace/"
+const REGISTRATION_FOLDER = "/home/bregy/Desktop/detechAlgorithm/registered/"
+const CROPPED_FOLDER = "/home/bregy/Desktop/detechAlgorithm/cropped/"
+const DIFFS_FOLDER = "/home/bregy/Desktop/detechAlgorithm/diff/"
 
 func main() {
 	app := iris.New()
