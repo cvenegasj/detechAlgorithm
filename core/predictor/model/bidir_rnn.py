@@ -11,7 +11,7 @@ import numpy as np
 detech = dd.read_data_sets('/home/bregy/Desktop/detechAlgorithm/core/predictor/model/testOut')
 
 learning_rate = 0.001
-training_steps = 5000
+training_steps = 10000
 batch_size = 100
 display_step = 100
 
@@ -84,4 +84,8 @@ print("Optimization Finished!")
 
 test_x, test_y = detech.get_test_data()
 
-print(sess.run(prediction, feed_dict={X: test_x, Y: test_y}))
+predictedOutputs = sess.run(prediction, feed_dict={X: test_x, Y: test_y})
+predictedOutputs = np.array([out//max(out) for out in predictedOutputs])
+accu = np.sum(predictedOutputs * test_y)/len(test_y)
+
+print("Using test data, we have " + "{:.4f}".format(accu) + " of accuracy")
