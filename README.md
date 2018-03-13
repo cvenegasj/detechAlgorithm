@@ -196,14 +196,15 @@ In case `tsub == 'ab'` we substract image 2 from image 1. In the other case (`ts
 	    diff = ImageChops.difference(img2, img1)
 	    finalWeight = im2Weight - im1Weight
 	```
-We then assign a formatted file name, including the distance of the camera (8cm, 10cm or 12cm), and save the diff file in the output folder.
+	
+	We then assign a formatted file name, including the distance of the camera (8cm, 10cm or 12cm), and save the diff file in the output folder.
 
 	```
 	name = 'img' + str(j) + '_d8_' + str(finalWeight).replace('.', 'd') + '.jpg'
-   diff.save(outputFolder + name)
-    ```
-    
-    If the `tsub` parameter is equal to `'t'` the images difference are calculated taking two images at a time from the same hand (whether 'a' or 'b').
+	diff.save(outputFolder + name)
+	```
+
+	If the `tsub` parameter is equal to `'t'` the images difference are calculated taking two images at a time from the same hand (whether 'a' or 'b').
 
 * [`images_operations.py`](./core/images_operations.py)  
 Contains functions that process images.  
