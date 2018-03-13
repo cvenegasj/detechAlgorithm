@@ -126,25 +126,24 @@ These files execute the Python scripts.
 	* output_path: `WORKSPACE_FOLDER`.
 	
 	
-	```
+	```python
 	def detech2tags(input_path, output_path):
 	```
 	
 	**Each photo is taken with the camera gun device at 8cm, 10cm or 12cm of distance to skin.**
 	
-	```
+	```python
 	dist = ['8', '10', '12']
 	```
 	
-	```
+	```python
 	hand = 'a'
-   num = (filesp[j][1]-filesp[0][1]).seconds
-   w = 0.
-   if num!=0:
+	num = (filesp[j][1]-filesp[0][1]).seconds
+	w = 0.
+	if num!=0:
 		w = num/totalSeconds
 
-   fname = 'img'+str(filesp[j][0])+'_'+hand+'_'+dist[m]+'_'+str(w).replace('.', 'd') + '.jpg'
-   
+	fname = 'img'+str(filesp[j][0])+'_'+hand+'_'+dist[m]+'_'+str(w).replace('.', 'd') + '.jpg'
     ```
     
     Here, we specify the hand type (**'a' for the affected hand, and 'b' for the unaffected one**). Then, we calculate a **weight** for each photo based on the seconds transcurred from the **beginning** to the capture of the photo. 
@@ -177,7 +176,7 @@ These files execute the Python scripts.
 	
 	For each file in the input folder executes the `RigidRegistration(...)` function from the [core/registro1.py](./core/registro1.py) script:
 	
-	```
+	```python
 	protoImg = reg.RigidRegistration(inputFolder+nameOfMediumImage, inputFolder+f, 'correlation', 'grad-desc')
 	```
 
@@ -188,7 +187,7 @@ These files execute the Python scripts.
 Contains the function `folderDiffsExtract(...)`, which iterates over the files in the input folder and separates the images based on whether they belong to `a` or `b` hand. Then calculates the difference between the `a` image and the `b` image.  
 In case `tsub == 'ab'` we substract image 2 from image 1. In the other case (`tsub == 'ba'`) we substract image 1 from image 2.
 
-	```
+	```python
 	if tsub[0] == 'ab':
 	    diff = ImageChops.difference(img1, img2)
 	    finalWeight = im1Weight - im2Weight
@@ -199,7 +198,7 @@ In case `tsub == 'ab'` we substract image 2 from image 1. In the other case (`ts
 	
 	We then assign a formatted file name, including the distance of the camera (8cm, 10cm or 12cm), and save the diff file in the output folder.
 
-	```
+	```python
 	name = 'img' + str(j) + '_d8_' + str(finalWeight).replace('.', 'd') + '.jpg'
 	diff.save(outputFolder + name)
 	```
