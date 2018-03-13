@@ -1,3 +1,7 @@
+<div align="center">
+	<img src="./logoDetech.png" alt="Detech logo" width="320" />
+</div>
+
 # Detech Algorithm
 
 *The Detech web app for image pre-processing and machine learning.*
