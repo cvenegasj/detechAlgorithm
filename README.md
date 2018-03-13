@@ -1,5 +1,5 @@
 <div align="center">
-	<img src="./logoDetech.png" alt="Detech logo" width="320" />
+	<img src="./logo-detech.png" alt="Detech logo" width="320" />
 </div>
 
 # Detech Algorithm
