@@ -32,7 +32,7 @@ Registers the initial view template.
 **`app.Post("/upload-folder", func(c context.Context)`**  
 Receives a local folder location and copies all the contained photos with the `detechPhoto` format in a new folder called `UPLOAD_FOLDER`. It also executes the [`core/create_workspace.sh`](./core/create_workspace.sh) command, which calls the [`core/detechToTags.py`](./core/detechToTags.py).
 
-Please specify the correct folder location before running this script:
+Please specify the correct folder locations before running this script:
 
 ```python
 const UPLOAD_FOLDER = "/home/bregy/Desktop/detechAlgorithm/uploads/"
