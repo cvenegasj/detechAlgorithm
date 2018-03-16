@@ -32,6 +32,16 @@ Registers the initial view template.
 **`app.Post("/upload-folder", func(c context.Context)`**  
 Receives a local folder location and copies all the contained photos with the `detechPhoto` format in a new folder called `UPLOAD_FOLDER`. It also executes the [`core/create_workspace.sh`](./core/create_workspace.sh) command, which calls the [`core/detechToTags.py`](./core/detechToTags.py).
 
+Please specify the correct folder location before running this script:
+
+```python
+const UPLOAD_FOLDER = "/home/bregy/Desktop/detechAlgorithm/uploads/"
+const WORKSPACE_FOLDER = "/home/bregy/Desktop/detechAlgorithm/workspace/"
+const REGISTRATION_FOLDER = "/home/bregy/Desktop/detechAlgorithm/registered/"
+const CROPPED_FOLDER = "/home/bregy/Desktop/detechAlgorithm/cropped/"
+const DIFFS_FOLDER = "/home/bregy/Desktop/detechAlgorithm/diff/"
+```
+
 
 ### [sorting.go](./sorting.go)  
 Contains the implementation of our custom sorting function in Go. We create a `ByDetechTag` type, which is just an alias for the builtin `[]string` type. We implement `sort.Interface` - `Len`, `Less`, and `Swap` - on our type so we can use the sort package’s generic Sort function. `Len` and `Swap` will usually be similar across types and `Less` will hold the actual custom sorting logic.
